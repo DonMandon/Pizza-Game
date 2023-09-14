@@ -2,7 +2,7 @@ import random
 
 
 # BASIC game on pdf page 141
-def random_pizza():
+def the_pizza_function():
     pizzas = ['Salami', 'Margherita', 'Diavola', 'Hawaiian', 'Buffalo', 'Pepperoni', 'BBQ', 'Neapolitan', 'Meat']
     toppings = ['salami', 'cheese', 'onions', 'anchovies', 'olives', 'pepperoni', 'BBQ sauce', 'rucola', 'garlic',
                 'pineapple', 'meatballs', 'mushrooms']
@@ -98,7 +98,7 @@ caller_coordinates = {
 while True:
     current_caller = random.choice(caller_names)
     print(f'''
-*ring* *ring* Hello, {player_name}'s Pizza. This is {current_caller}. I'd like a {random_pizza()}.
+*ring* *ring* Hello, {player_name}'s Pizza. This is {current_caller}. I'd like a {the_pizza_function()}.
 ''')
     input_coords = str(input(f'Driver to {player_name}. Where does {current_caller} live? '))
     if input_coords.lower() == 'quit':
@@ -110,7 +110,8 @@ while True:
             try:
                 print(f'''
 *ring* *ring* Hello {player_name}, this is {list(caller_coordinates.keys())[list(caller_coordinates.values()).index(input_coords)]}.
-I did not order a pizza. live at {input_coords}.''')  # https://stackoverflow.com/questions/8023306/get-key-by-value-in-dictionary
+I did not order a pizza. live at {input_coords}.''')
+# https://stackoverflow.com/questions/8023306/get-key-by-value-in-dictionary
                 input_coords = input(f'Driver to {player_name}. Where does {current_caller} live? ')
                 if caller_coordinates[current_caller] == input_coords:
                     break
