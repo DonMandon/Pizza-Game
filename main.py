@@ -53,7 +53,7 @@ print('''
  -                           -
  -                           -
  -                           -
-  -----1-----2-----3-----4-----
+ ------1-----2-----3-----4----
 
 The above is a map of the homes where you need to send pizzas to.
 I recommend you take a picture of it since you'll have to scroll a lot otherwise.
