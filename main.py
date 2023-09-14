@@ -110,7 +110,7 @@ while True:
             try:
                 print(f'''
 *ring* *ring* Hello {player_name}, this is {list(caller_coordinates.keys())[list(caller_coordinates.values()).index(input_coords)]}.
-I did not order a pizza. live at {input_coords}.''')
+I did not order a pizza. I live at {input_coords}.''')
 # https://stackoverflow.com/questions/8023306/get-key-by-value-in-dictionary
                 input_coords = input(f'Driver to {player_name}. Where does {current_caller} live? ')
                 if caller_coordinates[current_caller] == input_coords:
