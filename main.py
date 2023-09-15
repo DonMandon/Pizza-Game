@@ -96,7 +96,9 @@ caller_coordinates = {
     'Connor': '3,1',
     'David': '4,1'
 }
+failed_deliveries = 0
 while True:
+    pizza_got_cold = False
     current_caller = random.choice(caller_names)
     print(f'''
 *ring* *ring* Hello, {player_name}'s Pizza. This is {current_caller}. I'd like a {the_pizza_function()}.
@@ -107,25 +109,50 @@ while True:
     elif caller_coordinates[current_caller] == input_coords:
         pass
     else:
+        pizza_cold_timer = 0
         while True:
             try:
                 print(f'''
 *ring* *ring* Hello {player_name}, this is {list(caller_coordinates.keys())[list(caller_coordinates.values()).index(input_coords)]}.
 I did not order a pizza. I live at {input_coords}.''')
-# https://stackoverflow.com/questions/8023306/get-key-by-value-in-dictionary
+# getting the name from the coordinates from https://stackoverflow.com/questions/8023306/get-key-by-value-in-dictionary
                 input_coords = input(f'Driver to {player_name}. Where does {current_caller} live? ')
                 if caller_coordinates[current_caller] == input_coords:
                     break
                 else:
-                    continue
+                    pizza_cold_timer += 1
+                    if pizza_cold_timer == 3:
+                        pizza_got_cold = True
+                        break
+                    else:
+                        continue
             except ValueError:
                 input_coords = input(
                     f"Driver to {player_name}. These coordinates aren't on the map. Could you repeat that?")
-                continue
+                pizza_cold_timer += 1
+                if pizza_cold_timer == 3:
+                    pizza_got_cold = True
+                    break
+                else:
+                    continue
+                # when player inputs nonsense and then the right coordinates the caller thinks
+                # they didn't order a pizza, after a second try in works though
+    if pizza_got_cold:
+        print(f'''
+Driver to {player_name}. Unfortunately the pizza got cold. I'll have to tell the customer the delivery failed.''')
+        failed_deliveries += 1
+        print(f'Failed deliveries: {failed_deliveries}')
+        if failed_deliveries == 3:
+            break
+        else:
+            continue
     while True:
         if caller_coordinates[current_caller] == input_coords:
             print(f'''
 *ring* *ring* Hello {player_name}, this is {current_caller}. Thanks for the pizza!
 ''')
             break
-print(f'Bye, {player_name}!')
+if failed_deliveries == 3:
+    input('Unfortunately you failed to deliver too many pizzas. You will be... promoted to customer. ')
+else:
+    input(f'Bye, {player_name}!')
