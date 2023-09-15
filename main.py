@@ -24,6 +24,7 @@ print('''
     ░     ▒ ░▒░ ░ ░ ░  ░   ░▒ ░      ▒ ░░░▒ ▒ ░ ▒░░▒ ▒ ░ ▒  ▒   ▒▒ ░     ░   ░   ▒   ▒▒ ░░  ░      ░ ░ ░  ░
   ░       ░  ░░ ░   ░      ░░        ▒ ░░ ░ ░ ░ ░░ ░ ░ ░ ░  ░   ▒      ░ ░   ░   ░   ▒   ░      ░      ░   
           ░  ░  ░   ░  ░             ░    ░ ░      ░ ░          ░  ░         ░       ░  ░       ░      ░  ░''')
+# Title ASCII art from https://patorjk.com/software/taag/#p=display&f=Bloody&t=THE%20PIZZA%20GAME
 player_name = input('What is your first name? ')
 print(f'Hi, {player_name}. In this game you take orders, and then tell a delivery guy where to deliver them.')
 print('''
@@ -59,16 +60,16 @@ The above is a map of the homes where you need to send pizzas to.
 I recommend you take a picture of it since you'll have to scroll a lot otherwise.
 The letters are the first letters of their names.
 Your job is to give a truck driver the location (the coordinates) of the home ordering the pizza.''')
-directions_check = input('Do you need more directions? ')
-if directions_check.lower() == 'yes':
+introduction_check = input('Do you an introduction? (recommended for a first time player) ')
+if introduction_check.lower() == 'yes':
     print(f'''
 Somebody will ask for a pizza to be delivered. Then a delivery boy will ask you for the location.
-Example: This is Jason. Please send me a pizza.
+Example: Hello {player_name}'s Pizza. This is Jason. I'd like a pizza.
 Driver to {player_name}. where does Jason live? Your answer would be '2,3'
 (The first coordinate is horizontal, the second one vertical)
 You can quit the game by typing 'quit' when asked about the coordinates.
 A bit sad, but I'm sure they'll find someone else to yell the coordinates for you.''')
-elif directions_check.lower() == 'no':
+elif introduction_check.lower() == 'no':
     print("I guess you don't need any more explanations!")
 else:
     print('huh?')
