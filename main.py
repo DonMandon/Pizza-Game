@@ -1,6 +1,7 @@
 import random
 
 
+# Ideas: HI-scores (most consecutive deliveries), delivery driver having an accident sometimes, achievements
 # BASIC game on pdf page 141
 def the_pizza_function():
     pizzas = ['Salami', 'Margherita', 'Diavola', 'Hawaiian', 'Buffalo', 'Pepperoni', 'BBQ', 'Neapolitan', 'Meat']
@@ -12,6 +13,11 @@ def the_pizza_function():
         return f'a {pizza_kind} pizza with extra {extra_topping}'
     else:
         return f'a {pizza_kind} pizza'
+
+
+def file_mod(name, text, wora):
+    with open(name, wora) as file:
+        file.write(text)
 
 
 print('''
@@ -97,6 +103,7 @@ caller_coordinates = {
     'David': '4,1'
 }
 failed_deliveries = 0
+consecutive_deliveries = 0
 while True:
     pizza_got_cold = False
     current_caller = random.choice(caller_names)
@@ -116,8 +123,9 @@ while True:
                     break
                 else:
                     print(f'''
-    *ring* *ring* Hello {player_name}, this is {list(caller_coordinates.keys())[list(caller_coordinates.values()).index(input_coords)]}.
-    I did not order a pizza. I live at {input_coords}.''')
+*ring* *ring* Hello {player_name}, this is {list(caller_coordinates.keys())[list(caller_coordinates.values()).index(input_coords)]}.
+
+I did not order a pizza. I live at {input_coords}.''')
 # getting the name from the coordinates from https://stackoverflow.com/questions/8023306/get-key-by-value-in-dictionary
                 input_coords = input(f'Driver to {player_name}. Where does {current_caller} live? ')
                 if caller_coordinates[current_caller] == input_coords:
@@ -142,6 +150,7 @@ while True:
         print(f'''
 Driver to {player_name}. Unfortunately the pizza got cold. I'll have to tell the customer the delivery failed.''')
         failed_deliveries += 1
+        consecutive_deliveries = 0
         print(f'Failed deliveries: {failed_deliveries}')
         if failed_deliveries == 3:
             break
@@ -152,8 +161,19 @@ Driver to {player_name}. Unfortunately the pizza got cold. I'll have to tell the
             print(f'''
 *ring* *ring* Hello {player_name}, this is {current_caller}. Thanks for the pizza!
 ''')
+            consecutive_deliveries += 1
             break
-if failed_deliveries == 3:
-    input('Unfortunately you failed to deliver too many pizzas. You will be... promoted to customer. ')
-else:
-    input(f'Bye, {player_name}!')
+while True:
+    with open('High_Score.txt') as f:
+        high_score = int(f.read())
+        if failed_deliveries == 3:
+            input('Unfortunately you failed to deliver too many pizzas. You will be... promoted to a customer. ')
+            if consecutive_deliveries > high_score:
+                print(f'New High Score!: {consecutive_deliveries}')
+                file_mod('High_Score.txt', str(consecutive_deliveries), 'w')
+        else:
+            if consecutive_deliveries > high_score:
+                print(f'New High Score!: {consecutive_deliveries}')
+                file_mod('High_Score.txt', str(consecutive_deliveries), 'w')
+            input(f'Bye, {player_name}!')
+            break
