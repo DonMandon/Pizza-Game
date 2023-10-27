@@ -101,6 +101,10 @@ def the_pizza_function():
 
 
 def get_delivery_coordinates(player_name, current_caller):
+    cant_find_statements = [
+        "Sorry man, I can't find that on the map.",
+        "Pretty sure that's outside this neighborhood."
+    ]
     global pizza_got_cold
     global caller_coordinates
     failed_deliveries= 0
@@ -111,11 +115,22 @@ def get_delivery_coordinates(player_name, current_caller):
         elif caller_coordinates.get(current_caller) == input_coords:
             break
         else:
-            if get_caller_by_coordinates(caller_coordinates, input_coords) is None:
-                # add easter egg here
-                print('coordinates not valid')
-            else:
+            try:
                 print(f"*ring* *ring* Hello {player_name}, this is {get_caller_by_coordinates(caller_coordinates, input_coords)}. I did not order a pizza. I live at {input_coords}.")
+            except ValueError:
+                if '42' in input_coords:
+                    input('''
+42 is the answer to life, the universe, and everything.
+But it's not the answer to why there's someone at my door. I didn't order a pizza.''')
+                elif random.randint(0, 100) == 1:
+                    input('''
+You have reached Anton.
+I am obliged by contract to put a 4th wall break in any game I make.
+Also those coordinates were not on the map.
+                                    ''')
+                else:
+                    input(random.choice(cant_find_statements))
+                    pass
             failed_deliveries += 1
             if failed_deliveries >= 3:
                 pizza_got_cold = True
@@ -125,8 +140,10 @@ def get_delivery_coordinates(player_name, current_caller):
 
 # this function was written by ChatGPT
 def get_caller_by_coordinates(caller_coordinates_for_function, input_coords):
-    return next((name for name, coords in caller_coordinates_for_function.items() if coords == input_coords), None)
-
+    try:
+        return next((name for name, coords in caller_coordinates_for_function.items() if coords == input_coords), None)
+    except ValueError:
+        return None
 
 def end_game(player_name, consecutive_deliveries):
     global game_over
