@@ -2,7 +2,6 @@ import random
 
 
 def main():
-    player_name = input('What is your first name? ')
     print(f'Hi, {player_name}. In this game, you take orders, and then tell a delivery guy where to deliver them.')
     print('''
 |Map of the city of Hyattsville|
@@ -36,26 +35,23 @@ def main():
 The above is a map of the homes where you need to send pizzas to.
 I recommend you take a picture of it since you'll have to scroll a lot otherwise.
 The letters are the first letters of their names.
-Your job is to give a truck driver the location (the coordinates) of the home ordering the pizza.
-       ''')
+Your job is to give a truck driver the location (the coordinates) of the home ordering the pizza.\n''')
     introduction_check = input('Do you need an introduction? (recommended for a first-time player) ').lower()
     if introduction_check == 'yes':
-        print('''
-Somebody will ask for a pizza to be delivered. Then a delivery boy will ask you for the location.
+        print(f'''
+Somebody will ask for a pizza to be delivered. Then a delivery guy will ask you for the location.
 
 Example: Hello {player_name}'s Pizza. This is Jason. I'd like a pizza.
 Driver to {player_name}. where does Jason live? Your answer would be '2,3'
 (The first coordinate is horizontal, the second one vertical)
 
 You can quit the game by typing 'quit' when asked about the coordinates.
-A bit sad, but I'm sure they'll find someone else to yell the coordinates for you.
-''')
+A bit sad, but I'm sure they'll find someone else to yell the coordinates for you.\n''')
     elif introduction_check == 'no':
         print("Let's get started then.")
     else:
         print('huh?')
-    print('''Good luck delivering those pizzas!
-''')
+    print("Good luck delivering those pizzas!\n")
     deliver_pizza(player_name)
 
 
@@ -63,24 +59,40 @@ def deliver_pizza(player_name):
     global game_over
     global pizza_got_cold
     global caller_coordinates
-    caller_names = ('Matt', 'Nolan', 'Oliver', 'Paul', 'Isabelle', 'Jason', 'Kevin', 'Lauren', 'Elizabeth', 'Felix',
-                    'Gregory', 'Henry', 'Aaron', 'Barbara', 'Connor', 'David')
+    # you could also use the dictionary for this, as random.choice also works with dictionaries
+    caller_names = (
+        'Matt',
+        'Nolan',
+        'Oliver',
+        'Paul',
+        'Isabelle',
+        'Jason',
+        'Kevin',
+        'Lauren',
+        'Elizabeth',
+        'Felix',
+        'Gregory',
+        'Henry',
+        'Aaron',
+        'Barbara',
+        'Connor',
+        'David'
+    )
     failed_deliveries = 0
     consecutive_deliveries = 0
     while True:
         current_caller = random.choice(caller_names)
-        print(f"*ring* *ring* Hello, {player_name}'s Pizza. This is {current_caller}. I'd like {the_pizza_function()}.")
+        print(f"Customer speaking: Hello, {player_name}'s Pizza. This is {current_caller}. I'd like {the_pizza_function()}.")
         input_coords = get_delivery_coordinates(player_name, current_caller)
         if input_coords.lower() == 'quit':
             break
         if caller_coordinates.get(current_caller) == input_coords:
-            input(f'''*ring* *ring* Hello {player_name}, this is {current_caller}. Thanks for the pizza!
-''')
+            input(f"Customer speaking: Hello {player_name}, this is {current_caller}. Thanks for the pizza!\n")
             consecutive_deliveries += 1
         if pizza_got_cold:
             failed_deliveries += 1
             consecutive_deliveries = 0
-            print(f"Driver to {player_name}. Unfortunately the pizza got cold. I'll have to tell the customer the delivery failed.")
+            print(f"Driver to {player_name}. Unfortunately the pizza got cold. I'll have to tell the customer the delivery failed.\n")
             input(f'Failed deliveries: {failed_deliveries}')
             if failed_deliveries >= 3:
                 game_over = True
@@ -90,8 +102,7 @@ def deliver_pizza(player_name):
 
 def the_pizza_function():
     pizzas = ['Salami', 'Margherita', 'Diavola', 'Hawaiian', 'Buffalo', 'Pepperoni', 'BBQ', 'Neapolitan', 'Meat']
-    toppings = ['salami', 'cheese', 'onions', 'anchovies', 'olives', 'pepperoni', 'BBQ sauce', 'rucola', 'garlic',
-                'pineapple', 'meatballs', 'mushrooms']
+    toppings = ['salami', 'cheese', 'onions', 'anchovies', 'olives', 'pepperoni', 'BBQ sauce', 'rucola', 'garlic', 'pineapple', 'meatballs', 'mushrooms']
     pizza_kind = random.choice(pizzas)
     extra_topping = random.choice(toppings)
     if random.randint(0, 3) == 3:
@@ -102,8 +113,9 @@ def the_pizza_function():
 
 def get_delivery_coordinates(player_name, current_caller):
     cant_find_statements = [
-        "Sorry man, I can't find that on the map.",
-        "Pretty sure that's outside this neighborhood."
+        f"Driver to {player_name}. Sorry man, I can't find that on the map.",
+        f"Driver to {player_name}. Pretty sure that's outside this neighborhood.",
+        f"Driver to {player_name}. Sorry I think the connection stuttered, could you repeat that?",
     ]
     global pizza_got_cold
     global caller_coordinates
@@ -115,26 +127,24 @@ def get_delivery_coordinates(player_name, current_caller):
         elif caller_coordinates.get(current_caller) == input_coords:
             break
         else:
-            try:
-                print(f"*ring* *ring* Hello {player_name}, this is {get_caller_by_coordinates(caller_coordinates, input_coords)}. I did not order a pizza. I live at {input_coords}.")
-            except ValueError:
+            failed_deliveries += 1
+            if get_caller_by_coordinates(caller_coordinates,input_coords) is None:
                 if '42' in input_coords:
                     input('''
-42 is the answer to life, the universe, and everything.
-But it's not the answer to why there's someone at my door. I didn't order a pizza.''')
+Customer speaking: 42 is the answer to life, the universe, and everything.
+But it's not the answer to why there's someone at my door. I didn't order a pizza.\n''')
                 elif random.randint(0, 100) == 1:
                     input('''
-You have reached Anton.
+Customer speaking: You have reached Anton.
 I am obliged by contract to put a 4th wall break in any game I make.
-Also those coordinates were not on the map.
-                                    ''')
+Also those coordinates you put in were not on the map. Try again.\n''')
                 else:
                     input(random.choice(cant_find_statements))
-                    pass
-            failed_deliveries += 1
-            if failed_deliveries >= 3:
-                pizza_got_cold = True
-                break
+                if failed_deliveries >= 3:
+                    pizza_got_cold = True
+                    break
+            else:
+                print(f"Customer speaking: Hello {player_name}, this is {get_caller_by_coordinates(caller_coordinates, input_coords)}. I did not order a pizza. I live at {input_coords}.\n")
     return input_coords
 
 
@@ -157,7 +167,7 @@ def end_game(player_name, consecutive_deliveries):
             f.write(str(consecutive_deliveries))
         print(f'New High Score!: {consecutive_deliveries}')
     if game_over:
-        input('Unfortunately you failed to deliver too many pizzas. You will be... promoted to a customer. ')
+        input('Unfortunately you failed to deliver too many pizzas. You will be... promoted to customer. ')
     input(f'Bye, {player_name}!')
 
 
@@ -182,5 +192,6 @@ caller_coordinates = {
 failed_deliveries = 0
 pizza_got_cold = False
 game_over = False
+player_name = input('What is your first name? ')
 if __name__ == "__main__":
     main()

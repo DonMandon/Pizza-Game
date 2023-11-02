@@ -1,5 +1,6 @@
 import random
 
+
 def the_pizza_function():
     pizzas = ['Salami', 'Margherita', 'Diavola', 'Hawaiian', 'Buffalo', 'Pepperoni', 'BBQ', 'Neapolitan', 'Meat']
     toppings = ['salami', 'cheese', 'onions', 'anchovies', 'olives', 'pepperoni', 'BBQ sauce', 'rucola', 'garlic',
@@ -7,6 +8,7 @@ def the_pizza_function():
     pizza_kind = random.choice(pizzas)
     extra_topping = random.choice(toppings)
     return f'a {pizza_kind} pizza with extra {extra_topping}' if random.randint(0, 3) == 3 else f'a {pizza_kind} pizza'
+
 
 print('''
 ▄▄▄█████▓ ██░ ██ ▓█████     ██▓███   ██▓▒███████▒▒███████▒ ▄▄▄           ▄████  ▄▄▄       ███▄ ▄███▓▓█████ 
@@ -20,7 +22,7 @@ print('''
           ░  ░  ░   ░  ░             ░    ░ ░      ░ ░          ░  ░         ░       ░  ░       ░      ░  ░
 ''')
 
-player_name = input('What is your first name? ')
+player_name = input("What's your name? ")
 print(f'Hi, {player_name}. In this game, you take orders and tell a delivery guy where to deliver them.')
 print('''
 |Map of the city of Hyattsville|
@@ -88,7 +90,7 @@ while True:
     current_caller = random.choice(list(caller_coordinates.keys()))
     print(f'*ring* *ring* Hello, {player_name}\'s Pizza. This is {current_caller}. I\'d like {the_pizza_function()}.')
     input_coords = input(f'Driver to {player_name}. Where does {current_caller} live? ')
-# this version can't handle the player not inputting valid coordinates
+# this version can't handle the player inputting invalid coordinates
     if input_coords.lower() == 'quit':
         break
     elif caller_coordinates.get(current_caller) == input_coords:
