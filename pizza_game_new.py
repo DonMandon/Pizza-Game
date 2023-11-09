@@ -1,7 +1,8 @@
 import random
 
 
-def main():
+def intro():
+    """introduces the player to game mechanics"""
     print(f'Hi, {player_name}. In this game, you take orders, and then tell a delivery guy where to deliver them.')
     print('''
 |Map of the city of Hyattsville|
@@ -56,6 +57,7 @@ A bit sad, but I'm sure they'll find someone else to yell the coordinates for yo
 
 
 def deliver_pizza(player_name):
+    """main game logic"""
     global game_over
     global pizza_got_cold
     global caller_coordinates
@@ -101,6 +103,7 @@ def deliver_pizza(player_name):
 
 
 def the_pizza_function():
+    """generates a random pizza"""
     pizzas = ['Salami', 'Margherita', 'Diavola', 'Hawaiian', 'Buffalo', 'Pepperoni', 'BBQ', 'Neapolitan', 'Meat']
     toppings = ['salami', 'cheese', 'onions', 'anchovies', 'olives', 'pepperoni', 'BBQ sauce', 'rucola', 'garlic', 'pineapple', 'meatballs', 'mushrooms']
     pizza_kind = random.choice(pizzas)
@@ -112,6 +115,7 @@ def the_pizza_function():
 
 
 def get_delivery_coordinates(player_name, current_caller):
+    """handles player input and gives 'error messages'"""
     cant_find_statements = [
         f"Driver to {player_name}. Sorry man, I can't find that on the map.",
         f"Driver to {player_name}. Pretty sure that's outside this neighborhood.",
@@ -155,7 +159,9 @@ def get_caller_by_coordinates(caller_coordinates_for_function, input_coords):
     except ValueError:
         return None
 
+
 def end_game(player_name, consecutive_deliveries):
+    """checks for a new high score and ends game"""
     global game_over
     with open('High_Score.txt') as f:
         try:
@@ -194,4 +200,4 @@ pizza_got_cold = False
 game_over = False
 player_name = input('What is your first name? ')
 if __name__ == "__main__":
-    main()
+    intro()
