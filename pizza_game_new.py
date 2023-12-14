@@ -1,3 +1,4 @@
+#maybe implement system were you need to manage resources (ingedients for pizza, maybe even money)
 import random
 
 
@@ -60,35 +61,16 @@ def deliver_pizza(player_name):
     """main game logic"""
     global game_over
     global pizza_got_cold
-    global caller_coordinates
-    # you could also use the dictionary for this, as random.choice also works with dictionaries
-    caller_names = (
-        'Matt',
-        'Nolan',
-        'Oliver',
-        'Paul',
-        'Isabelle',
-        'Jason',
-        'Kevin',
-        'Lauren',
-        'Elizabeth',
-        'Felix',
-        'Gregory',
-        'Henry',
-        'Aaron',
-        'Barbara',
-        'Connor',
-        'David'
-    )
+    global the_populus
     failed_deliveries = 0
     consecutive_deliveries = 0
     while True:
-        current_caller = random.choice(caller_names)
+        current_caller = random.choice(list(the_populus))
         print(f"Customer speaking: Hello, {player_name}'s Pizza. This is {current_caller}. I'd like {the_pizza_function()}.")
-        input_coords = get_delivery_coordinates(player_name, current_caller)
+        input_coords = handle_input(player_name, current_caller)
         if input_coords.lower() == 'quit':
             break
-        if caller_coordinates.get(current_caller) == input_coords:
+        if the_populus.get(current_caller) == input_coords:
             input(f"Customer speaking: Hello {player_name}, this is {current_caller}. Thanks for the pizza!\n")
             consecutive_deliveries += 1
         if pizza_got_cold:
@@ -104,8 +86,12 @@ def deliver_pizza(player_name):
 
 def the_pizza_function():
     """generates a random pizza"""
-    pizzas = ['Salami', 'Margherita', 'Diavola', 'Hawaiian', 'Buffalo', 'Pepperoni', 'BBQ', 'Neapolitan', 'Meat']
-    toppings = ['salami', 'cheese', 'onions', 'anchovies', 'olives', 'pepperoni', 'BBQ sauce', 'rucola', 'garlic', 'pineapple', 'meatballs', 'mushrooms']
+    pizzas = ['Salami', 'Margherita', 'Diavola', 'Hawaiian', 'Buffalo', 'Pepperoni', 'BBQ', 'Neapolitan', 'Meat',
+              'Capricciosa', 'Quatro Formaggi', 'Calzone', 'BBQ Chicken', 'Mexican', 'Greek', ]
+    toppings = ['salami', 'mozzarella', 'onions', 'caramelized onions','anchovies', 'olives', 'pepperoni', 'BBQ sauce',
+                'arugula', 'garlic', 'pineapple', 'meatballs', 'mushrooms', 'bell peppers', 'artichokes', 'prosciutto',
+                'sun-dried tomatoes', 'feta cheese', 'buffalo mozzarella', 'blue cheese', 'jalapenos', 'sausage',
+                'bacon', 'corn', 'pine nuts', 'barbecue chicken']
     pizza_kind = random.choice(pizzas)
     extra_topping = random.choice(toppings)
     if random.randint(0, 3) == 3:
@@ -114,25 +100,51 @@ def the_pizza_function():
         return f'a {pizza_kind} pizza'
 
 
-def get_delivery_coordinates(player_name, current_caller):
+def handle_input(player_name, current_caller):
     """handles player input and gives 'error messages'"""
-    cant_find_statements = [
-        f"Driver to {player_name}. Sorry man, I can't find that on the map.",
-        f"Driver to {player_name}. Pretty sure that's outside this neighborhood.",
-        f"Driver to {player_name}. Sorry I think the connection stuttered, could you repeat that?",
-    ]
     global pizza_got_cold
-    global caller_coordinates
+    global the_populus
     failed_deliveries= 0
     while True:
         input_coords = input(f'Driver to {player_name}. Where does {current_caller} live? ')
+        cant_find_statements = [
+            f"Driver to {player_name}. Sorry man, I can't find that on the map.",
+            f"Driver to {player_name}. Pretty sure that's outside this neighborhood.",
+            f"Driver to {player_name}. Sorry I think the connection stuttered, could you repeat that?",
+            f"Driver to {player_name}. I think you took a wrong turn. Where does the customer live again?",
+            f'''
+Driver to {player_name}. Pizza delivery requires precise and accurate coordinates.
+What you just said was not that. Could you say that again?''',
+            f'''
+Driver to {player_name}.
+
+The reason why humanity evolved language, the ability to speak, was, inherently,to be able to communicate information.
+By being able to exchange information, humanity could cooperate more efficiently,
+like being able to show a good place to collect berries, or warning others of dangerous animals nearby.
+Eventually, concrete words and sentences were formed. Going from only being able to describe what was in the here and now,
+to forming words for more and more abstract and complicated things.
+People philosophised, contemplated life and existence, started to have complicated conversations.
+In this sense, language only makes sense, and only really works, because we have agreed upon words that everyone (or at least most)
+understand the meaning of. Because we can create very specific sets of sounds, that are immediately recognizable by whoever hears them.
+
+That's why, what you just said violates the laws of language, really, it's and injustice to humanity and its achievements.
+You can't just say "{input_coords}" and expect me to know what it means. You can't!
+The... sounds you just uttered are utterly and completely meaningless, and when giving instructions to somebody,
+one of the fundamental uses of language, it's important that the words you're saying have meaning!
+
+So, I hereby urge you to please, just enter coordinates that i can follow easily, so we can both do our jobs.
+'''
+            f"Driver to {player_name}. I got lost there for a moment. What are the correct coordinates?",
+            f"Driver to {player_name}. It seems we've hit a roadblock. Double-check the coordinates for me.",
+            f"Driver to {player_name}. Sorry, what?",
+        ]
         if input_coords.lower() == 'quit':
             break
-        elif caller_coordinates.get(current_caller) == input_coords:
+        elif the_populus.get(current_caller) == input_coords:
             break
         else:
             failed_deliveries += 1
-            if get_caller_by_coordinates(caller_coordinates,input_coords) is None:
+            if get_caller_by_coordinates(the_populus, input_coords) is None:
                 if '42' in input_coords:
                     input('''
 Customer speaking: 42 is the answer to life, the universe, and everything.
@@ -148,14 +160,15 @@ Also those coordinates you put in were not on the map. Try again.\n''')
                     pizza_got_cold = True
                     break
             else:
-                print(f"Customer speaking: Hello {player_name}, this is {get_caller_by_coordinates(caller_coordinates, input_coords)}. I did not order a pizza. I live at {input_coords}.\n")
+                print(f"Customer speaking: Hello {player_name}, this is {get_caller_by_coordinates(the_populus, input_coords)}. I did not order a pizza. I live at {input_coords}.\n")
     return input_coords
 
 
 # this function was written by ChatGPT
-def get_caller_by_coordinates(caller_coordinates_for_function, input_coords):
+def get_caller_by_coordinates(caller_coordinates, input_coords):
+    """self-explanatory"""
     try:
-        return next((name for name, coords in caller_coordinates_for_function.items() if coords == input_coords), None)
+        return next((name for name, coords in caller_coordinates.items() if coords == input_coords), None)
     except ValueError:
         return None
 
@@ -177,27 +190,38 @@ def end_game(player_name, consecutive_deliveries):
     input(f'Bye, {player_name}!')
 
 
-caller_coordinates = {
-    'Matt': '1,4',
-    'Nolan': '2,4',
-    'Oliver': '3,4',
-    'Paul': '4,4',
+the_populus = {
+    'Aaron': '1,1',
+    'Barbara': '2,1',
+    'Connor': '3,1',
+    'David': '4,1',
+    'Emma': '1,2',
+    'Felix': '2,2',
+    'Gregory': '3,2',
+    'Henry': '4,2',
     'Isabelle': '1,3',
     'Jason': '2,3',
     'Kevin': '3,3',
     'Lauren': '4,3',
-    'Elizabeth': '1,2',
-    'Felix': '2,2',
-    'Gregory': '3,2',
-    'Henry': '4,2',
-    'Aaron': '1,1',
-    'Barbara': '2,1',
-    'Connor': '3,1',
-    'David': '4,1'
+    'Matt': '1,4',
+    'Nolan': '2,4',
+    'Oliver': '3,4',
+    'Paul': '4,4'
 }
 failed_deliveries = 0
 pizza_got_cold = False
 game_over = False
+print('''
+▄▄▄█████▓ ██░ ██ ▓█████     ██▓███   ██▓▒███████▒▒███████▒ ▄▄▄           ▄████  ▄▄▄       ███▄ ▄███▓▓█████ 
+▓  ██▒ ▓▒▓██░ ██▒▓█   ▀    ▓██░  ██▒▓██▒▒ ▒ ▒ ▄▀░▒ ▒ ▒ ▄▀░▒████▄        ██▒ ▀█▒▒████▄    ▓██▒▀█▀ ██▒▓█   ▀ 
+▒ ▓██░ ▒░▒██▀▀██░▒███      ▓██░ ██▓▒▒██▒░ ▒ ▄▀▒░ ░ ▒ ▄▀▒░ ▒██  ▀█▄     ▒██░▄▄▄░▒██  ▀█▄  ▓██    ▓██░▒███   
+░ ▓██▓ ░ ░▓█ ░██ ▒▓█  ▄    ▒██▄█▓▒ ▒░██░  ▄▀▒   ░  ▄▀▒   ░░██▄▄▄▄██    ░▓█  ██▓░██▄▄▄▄██ ▒██    ▒██ ▒▓█  ▄ 
+  ▒██▒ ░ ░▓█▒░██▓░▒████▒   ▒██▒ ░  ░░██░▒███████▒▒███████▒ ▓█   ▓██▒   ░▒▓███▀▒ ▓█   ▓██▒▒██▒   ░██▒░▒████▒
+  ▒ ░░    ▒ ░░▒░▒░░ ▒░ ░   ▒▓▒░ ░  ░░▓  ░▒▒ ▓░▒░▒░▒▒ ▓░▒░▒ ▒▒   ▓▒█░    ░▒   ▒  ▒▒   ▓▒█░░ ▒░   ░  ░░░ ▒░ ░
+    ░     ▒ ░▒░ ░ ░ ░  ░   ░▒ ░      ▒ ░░░▒ ▒ ░ ▒░░▒ ▒ ░ ▒  ▒   ▒▒ ░     ░   ░   ▒   ▒▒ ░░  ░      ░ ░ ░  ░
+  ░       ░  ░░ ░   ░      ░░        ▒ ░░ ░ ░ ░ ░░ ░ ░ ░ ░  ░   ▒      ░ ░   ░   ░   ▒   ░      ░      ░   
+          ░  ░  ░   ░  ░             ░    ░ ░      ░ ░          ░  ░         ░       ░  ░       ░      ░  ░
+''')
 player_name = input('What is your first name? ')
 if __name__ == "__main__":
     intro()
