@@ -4,6 +4,19 @@ import random
 
 def intro():
     """introduces the player to game mechanics"""
+    print('''
+▄▄▄█████▓ ██░ ██ ▓█████     ██▓███   ██▓▒███████▒▒███████▒ ▄▄▄           ▄████  ▄▄▄       ███▄ ▄███▓▓█████ 
+▓  ██▒ ▓▒▓██░ ██▒▓█   ▀    ▓██░  ██▒▓██▒▒ ▒ ▒ ▄▀░▒ ▒ ▒ ▄▀░▒████▄        ██▒ ▀█▒▒████▄    ▓██▒▀█▀ ██▒▓█   ▀ 
+▒ ▓██░ ▒░▒██▀▀██░▒███      ▓██░ ██▓▒▒██▒░ ▒ ▄▀▒░ ░ ▒ ▄▀▒░ ▒██  ▀█▄     ▒██░▄▄▄░▒██  ▀█▄  ▓██    ▓██░▒███   
+░ ▓██▓ ░ ░▓█ ░██ ▒▓█  ▄    ▒██▄█▓▒ ▒░██░  ▄▀▒   ░  ▄▀▒   ░░██▄▄▄▄██    ░▓█  ██▓░██▄▄▄▄██ ▒██    ▒██ ▒▓█  ▄ 
+  ▒██▒ ░ ░▓█▒░██▓░▒████▒   ▒██▒ ░  ░░██░▒███████▒▒███████▒ ▓█   ▓██▒   ░▒▓███▀▒ ▓█   ▓██▒▒██▒   ░██▒░▒████▒
+  ▒ ░░    ▒ ░░▒░▒░░ ▒░ ░   ▒▓▒░ ░  ░░▓  ░▒▒ ▓░▒░▒░▒▒ ▓░▒░▒ ▒▒   ▓▒█░    ░▒   ▒  ▒▒   ▓▒█░░ ▒░   ░  ░░░ ▒░ ░
+    ░     ▒ ░▒░ ░ ░ ░  ░   ░▒ ░      ▒ ░░░▒ ▒ ░ ▒░░▒ ▒ ░ ▒  ▒   ▒▒ ░     ░   ░   ▒   ▒▒ ░░  ░      ░ ░ ░  ░
+  ░       ░  ░░ ░   ░      ░░        ▒ ░░ ░ ░ ░ ░░ ░ ░ ░ ░  ░   ▒      ░ ░   ░   ░   ▒   ░      ░      ░   
+          ░  ░  ░   ░  ░             ░    ░ ░      ░ ░          ░  ░         ░       ░  ░       ░      ░  ░
+
+''')
+    player_name = input('What is your first name? ')
     print(f'Hi, {player_name}. In this game, you take orders, and then tell a delivery guy where to deliver them.')
     print('''
 |Map of the city of Hyattsville|
@@ -62,16 +75,53 @@ def deliver_pizza(player_name):
     global game_over
     global pizza_got_cold
     global the_populus
+    global your_money
+    global pizza_price
+    global dough
+    global tomato_sauce
+    global mozzarella
+    global ambiguous_ingredients
+    global dough_use
+    global tomato_sauce_use
+    global mozzarella_use
+    # though it doesn't make sense sometimes to use 30 ingredient pieces for a margarita, consider this: it's funny
     failed_deliveries = 0
     consecutive_deliveries = 0
     while True:
+        ambiguous_ingredients_use = random.randint(0, 45)
+        print(f'You have ${your_money}')
+        store_ask = input('Would you like to go to the store? (yes/no) ')
+        if store_ask.lower() == 'yes':
+            store()
+            continue
+
         current_caller = random.choice(list(the_populus))
         print(f"Customer speaking: Hello, {player_name}'s Pizza. This is {current_caller}. I'd like {the_pizza_function()}.")
         input_coords = handle_input(player_name, current_caller)
         if input_coords.lower() == 'quit':
             break
         if the_populus.get(current_caller) == input_coords:
-            input(f"Customer speaking: Hello {player_name}, this is {current_caller}. Thanks for the pizza!\n")
+            print(f"Customer speaking: Hello {player_name}, this is {current_caller}. Thanks for the pizza!")
+            your_money += pizza_price - 7
+            dough -= dough_use
+            tomato_sauce -= tomato_sauce_use
+            mozzarella -= mozzarella_use
+            ambiguous_ingredients -= ambiguous_ingredients_use
+            input(f'''
+Transaction Overview:
+---------------------
+The customer paid you ${pizza_price}.    To make the pizza, you used {dough_use}g of dough,                                   
+You paid the driver $7.       {tomato_sauce_use}ml of tomato sauce, {mozzarella_use}g of mozzarella,
+                              and {ambiguous_ingredients_use} ingredient pieces.
+                              You now have left:
+                              {float(dough)/1000}kg of dough
+                              {float(tomato_sauce)/1000}l of tomato sauce
+                              {float(mozzarella)/1000}kg of mozzarella
+Profit: ${pizza_price - 7}                    {ambiguous_ingredients} ingredient pieces
+
+(press enter to continue)
+''')
+            # I don't know why, but it needs to be formatted like this in the code to look proper when displayed
             consecutive_deliveries += 1
         if pizza_got_cold:
             failed_deliveries += 1
@@ -84,8 +134,14 @@ def deliver_pizza(player_name):
     end_game(player_name, consecutive_deliveries)
 
 
+def store():
+    """allows the player to restock on ingredients"""
+    print('store placeholder')
+
+
 def the_pizza_function():
     """generates a random pizza"""
+    global pizza_price
     pizzas = ['Salami', 'Margherita', 'Diavola', 'Hawaiian', 'Buffalo', 'Pepperoni', 'BBQ', 'Neapolitan', 'Meat',
               'Capricciosa', 'Quatro Formaggi', 'Calzone', 'BBQ Chicken', 'Mexican', 'Greek', ]
     toppings = ['salami', 'mozzarella', 'onions', 'caramelized onions','anchovies', 'olives', 'pepperoni', 'BBQ sauce',
@@ -95,8 +151,10 @@ def the_pizza_function():
     pizza_kind = random.choice(pizzas)
     extra_topping = random.choice(toppings)
     if random.randint(0, 3) == 3:
+        pizza_price = random.randint(18,23)
         return f'a {pizza_kind} pizza with extra {extra_topping}'
     else:
+        pizza_price = random.randint(12,17)
         return f'a {pizza_kind} pizza'
 
 
@@ -146,16 +204,16 @@ So, I hereby urge you to please, just enter coordinates that i can follow easily
             failed_deliveries += 1
             if get_caller_by_coordinates(the_populus, input_coords) is None:
                 if '42' in input_coords:
-                    input('''
+                    print('''
 Customer speaking: 42 is the answer to life, the universe, and everything.
 But it's not the answer to why there's someone at my door. I didn't order a pizza.\n''')
                 elif random.randint(0, 100) == 1:
-                    input('''
+                    print('''
 Customer speaking: You have reached Anton.
 I am obliged by contract to put a 4th wall break in any game I make.
 Also those coordinates you put in were not on the map. Try again.\n''')
                 else:
-                    input(random.choice(cant_find_statements))
+                    print(random.choice(cant_find_statements))
                 if failed_deliveries >= 3:
                     pizza_got_cold = True
                     break
@@ -166,7 +224,7 @@ Also those coordinates you put in were not on the map. Try again.\n''')
 
 # this function was written by ChatGPT
 def get_caller_by_coordinates(caller_coordinates, input_coords):
-    """self-explanatory"""
+    """gets the name of a caller based on their coordinates"""
     try:
         return next((name for name, coords in caller_coordinates.items() if coords == input_coords), None)
     except ValueError:
@@ -184,6 +242,7 @@ def end_game(player_name, consecutive_deliveries):
     if consecutive_deliveries > high_score:
         with open('High_Score.txt', 'w') as f:
             f.write(str(consecutive_deliveries))
+        # knowledge on how to open and write in files provided by victor
         print(f'New High Score!: {consecutive_deliveries}')
     if game_over:
         input('Unfortunately you failed to deliver too many pizzas. You will be... promoted to customer. ')
@@ -211,17 +270,22 @@ the_populus = {
 failed_deliveries = 0
 pizza_got_cold = False
 game_over = False
-print('''
-▄▄▄█████▓ ██░ ██ ▓█████     ██▓███   ██▓▒███████▒▒███████▒ ▄▄▄           ▄████  ▄▄▄       ███▄ ▄███▓▓█████ 
-▓  ██▒ ▓▒▓██░ ██▒▓█   ▀    ▓██░  ██▒▓██▒▒ ▒ ▒ ▄▀░▒ ▒ ▒ ▄▀░▒████▄        ██▒ ▀█▒▒████▄    ▓██▒▀█▀ ██▒▓█   ▀ 
-▒ ▓██░ ▒░▒██▀▀██░▒███      ▓██░ ██▓▒▒██▒░ ▒ ▄▀▒░ ░ ▒ ▄▀▒░ ▒██  ▀█▄     ▒██░▄▄▄░▒██  ▀█▄  ▓██    ▓██░▒███   
-░ ▓██▓ ░ ░▓█ ░██ ▒▓█  ▄    ▒██▄█▓▒ ▒░██░  ▄▀▒   ░  ▄▀▒   ░░██▄▄▄▄██    ░▓█  ██▓░██▄▄▄▄██ ▒██    ▒██ ▒▓█  ▄ 
-  ▒██▒ ░ ░▓█▒░██▓░▒████▒   ▒██▒ ░  ░░██░▒███████▒▒███████▒ ▓█   ▓██▒   ░▒▓███▀▒ ▓█   ▓██▒▒██▒   ░██▒░▒████▒
-  ▒ ░░    ▒ ░░▒░▒░░ ▒░ ░   ▒▓▒░ ░  ░░▓  ░▒▒ ▓░▒░▒░▒▒ ▓░▒░▒ ▒▒   ▓▒█░    ░▒   ▒  ▒▒   ▓▒█░░ ▒░   ░  ░░░ ▒░ ░
-    ░     ▒ ░▒░ ░ ░ ░  ░   ░▒ ░      ▒ ░░░▒ ▒ ░ ▒░░▒ ▒ ░ ▒  ▒   ▒▒ ░     ░   ░   ▒   ▒▒ ░░  ░      ░ ░ ░  ░
-  ░       ░  ░░ ░   ░      ░░        ▒ ░░ ░ ░ ░ ░░ ░ ░ ░ ░  ░   ▒      ░ ░   ░   ░   ▒   ░      ░      ░   
-          ░  ░  ░   ░  ░             ░    ░ ░      ░ ░          ░  ░         ░       ░  ░       ░      ░  ░
-''')
-player_name = input('What is your first name? ')
+
+your_money = 50
+pizza_price = 15
+
+dough = 2000  # grams
+tomato_sauce = 2000  # milliliters
+mozzarella = 2000  # grams
+ambiguous_ingredients = 500  # individual "things"
+
+# ingredient amount use per pizza
+dough_use = 400  # g
+tomato_sauce_use = 110  # ml
+mozzarella_use = 170  # g
+
+
+
+
 if __name__ == "__main__":
     intro()
