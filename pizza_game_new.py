@@ -1,4 +1,3 @@
-#maybe implement system were you need to manage resources (ingedients for pizza, maybe even money)
 import random
 
 
@@ -84,11 +83,12 @@ def deliver_pizza(player_name):
     global dough_use
     global tomato_sauce_use
     global mozzarella_use
-    # though it doesn't make sense sometimes to use 30 ingredient pieces for a margarita, consider this: it's funny
+    global failed_deliveries
     failed_deliveries = 0
     consecutive_deliveries = 0
     while True:
         ambiguous_ingredients_use = random.randint(0, 45)
+        # though it doesn't make sense sometimes to use 30 ingredient pieces for a margarita, consider this: it's funny
         print(f'You have ${your_money}')
         store_ask = input('Would you like to go to the store? (yes/no) ')
         if store_ask.lower() == 'yes':
@@ -162,8 +162,22 @@ def handle_input(player_name, current_caller):
     """handles player input and gives 'error messages'"""
     global pizza_got_cold
     global the_populus
+    global dough
+    global tomato_sauce
+    global mozzarella
+    global ambiguous_ingredients
+    global delivery_failed_ingredients
     failed_deliveries= 0
+    # i was here last
     while True:
+        if dough <= 0:
+            dough = 0
+        elif tomato_sauce <= 0:
+            pass
+        elif mozzarella <= 0:
+            pass
+        elif ambiguous_ingredients <= 0:
+            pass
         input_coords = input(f'Driver to {player_name}. Where does {current_caller} live? ')
         cant_find_statements = [
             f"Driver to {player_name}. Sorry man, I can't find that on the map.",
@@ -243,7 +257,7 @@ def end_game(player_name, consecutive_deliveries):
         with open('High_Score.txt', 'w') as f:
             f.write(str(consecutive_deliveries))
         # knowledge on how to open and write in files provided by victor
-        print(f'New High Score!: {consecutive_deliveries}')
+        print(f'New High Score!: {consecutive_deliveries} deliveries')
     if game_over:
         input('Unfortunately you failed to deliver too many pizzas. You will be... promoted to customer. ')
     input(f'Bye, {player_name}!')
@@ -269,6 +283,7 @@ the_populus = {
 }
 failed_deliveries = 0
 pizza_got_cold = False
+delivery_failed_ingredients = False
 game_over = False
 
 your_money = 50
