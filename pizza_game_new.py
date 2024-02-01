@@ -136,6 +136,10 @@ Profit: ${pizza_price - 7}                    {ambiguous_ingredients} ingredient
 
 def store():
     """allows the player to restock on ingredients"""
+    print('Welcome to PizzaMart! The store for all your pizza-shopping needs!')
+    if your_money <= 0:
+        print("Whoops! Looks like you don't have any money!")
+        return None
     print('store placeholder')
 
 
