@@ -72,7 +72,7 @@ A bit sad, but I'm sure they'll find someone else to yell the coordinates for yo
 def deliver_pizza(player_name):
     """main game logic"""
     global game_over
-    global pizza_got_cold
+    global delivery_failed
     global the_populus
     global your_money
     global pizza_price
@@ -123,10 +123,10 @@ Profit: ${pizza_price - 7}                    {ambiguous_ingredients} ingredient
 ''')
             # I don't know why, but it needs to be formatted like this in the code to look proper when displayed
             consecutive_deliveries += 1
-        if pizza_got_cold:
+        if delivery_failed:
             failed_deliveries += 1
             consecutive_deliveries = 0
-            print(f"Driver to {player_name}. Unfortunately the pizza got cold. I'll have to tell the customer the delivery failed.\n")
+            print(f"Driver to {player_name}. Unfortunately you failed to deliver the pizza.")
             input(f'Failed deliveries: {failed_deliveries}')
             if failed_deliveries >= 3:
                 game_over = True
@@ -160,7 +160,7 @@ def the_pizza_function():
 
 def handle_input(player_name, current_caller):
     """handles player input and gives 'error messages'"""
-    global pizza_got_cold
+    global delivery_failed
     global the_populus
     global dough
     global tomato_sauce
@@ -168,17 +168,33 @@ def handle_input(player_name, current_caller):
     global ambiguous_ingredients
     global delivery_failed_ingredients
     failed_deliveries= 0
-    # i was here last
     while True:
+        input_coords = input(f'Driver to {player_name}. Where does {current_caller} live? ')
         if dough <= 0:
             dough = 0
+            failed_deliveries += 1
+            print("You ran outta dough. You literally can't make a pizza.")
+            delivery_failed = True
+            break
         elif tomato_sauce <= 0:
-            pass
+            tomato_sauce = 0
+            failed_deliveries += 1
+            print("You ran out of tomato sauce. You literally can't make a pizza.")
+            delivery_failed = True
+            break
         elif mozzarella <= 0:
-            pass
+            mozzarella = 0
+            failed_deliveries += 1
+            print("You ran ot of mozzarella. You literally can't make a pizza.")
+            delivery_failed = True
+            break
         elif ambiguous_ingredients <= 0:
-            pass
-        input_coords = input(f'Driver to {player_name}. Where does {current_caller} live? ')
+            ambiguous_ingredients = 0
+            failed_deliveries += 1
+            print("You ran out of ingredients. You can't make a pizza.")
+            delivery_failed = True
+            break
+
         cant_find_statements = [
             f"Driver to {player_name}. Sorry man, I can't find that on the map.",
             f"Driver to {player_name}. Pretty sure that's outside this neighborhood.",
@@ -229,7 +245,7 @@ Also those coordinates you put in were not on the map. Try again.\n''')
                 else:
                     print(random.choice(cant_find_statements))
                 if failed_deliveries >= 3:
-                    pizza_got_cold = True
+                    delivery_failed = True
                     break
             else:
                 print(f"Customer speaking: Hello {player_name}, this is {get_caller_by_coordinates(the_populus, input_coords)}. I did not order a pizza. I live at {input_coords}.\n")
@@ -282,7 +298,7 @@ the_populus = {
     'Paul': '4,4'
 }
 failed_deliveries = 0
-pizza_got_cold = False
+delivery_failed = False
 delivery_failed_ingredients = False
 game_over = False
 
