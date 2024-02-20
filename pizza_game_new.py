@@ -1,5 +1,5 @@
+# Based on the game showcased in "BASIC Computer Games" game on pdf page 141
 import random
-
 
 def intro():
     """introduces the player to game mechanics"""
@@ -15,6 +15,7 @@ def intro():
           ░  ░  ░   ░  ░             ░    ░ ░      ░ ░          ░  ░         ░       ░  ░       ░      ░  ░
 
 ''')
+    # Title ASCII art from https://patorjk.com/software/taag/#p=display&f=Bloody&t=THE%20PIZZA%20GAME
     player_name = input('What is your first name? ')
     print(f'Hi, {player_name}. In this game, you take orders, and then tell a delivery guy where to deliver them.')
     print('''
@@ -79,7 +80,7 @@ def deliver_pizza(player_name):
     global dough
     global tomato_sauce
     global mozzarella
-    global ambiguous_ingredients
+    global toppings
     global dough_use
     global tomato_sauce_use
     global mozzarella_use
@@ -87,7 +88,7 @@ def deliver_pizza(player_name):
     failed_deliveries = 0
     consecutive_deliveries = 0
     while True:
-        ambiguous_ingredients_use = random.randint(0, 45)
+        topping_use = random.randint(0, 45)
         # though it doesn't make sense sometimes to use 30 ingredient pieces for a margarita, consider this: it's funny
         print(f'You have ${your_money}')
         store_ask = input('Would you like to go to the store? (yes/no) ')
@@ -106,18 +107,18 @@ def deliver_pizza(player_name):
             dough -= dough_use
             tomato_sauce -= tomato_sauce_use
             mozzarella -= mozzarella_use
-            ambiguous_ingredients -= ambiguous_ingredients_use
+            toppings -= topping_use
             input(f'''
 Transaction Overview:
 ---------------------
 The customer paid you ${pizza_price}.    To make the pizza, you used {dough_use}g of dough,                                   
-You paid the driver $7.       {tomato_sauce_use}ml of tomato sauce, {mozzarella_use}g of mozzarella,
-                              and {ambiguous_ingredients_use} ingredient pieces.
-                              You now have left:
-                              {float(dough)/1000}kg of dough
-                              {float(tomato_sauce)/1000}l of tomato sauce
-                              {float(mozzarella)/1000}kg of mozzarella
-Profit: ${pizza_price - 7}                    {ambiguous_ingredients} ingredient pieces
+You paid the driver $7.                  {tomato_sauce_use}ml of tomato sauce, {mozzarella_use}g of mozzarella,
+                                         and {topping_use} ingredient pieces.
+                                         You now have left:
+                                         {float(dough)/1000}kg of dough
+                                         {float(tomato_sauce)/1000}l of tomato sauce
+                                         {float(mozzarella)/1000}kg of mozzarella
+Profit: ${round(pizza_price - 7),2}               {toppings} toppings
 
 (press enter to continue)
 ''')
@@ -135,13 +136,63 @@ Profit: ${pizza_price - 7}                    {ambiguous_ingredients} ingredient
 
 
 def store():
+    global your_money
+    global dough
+    global tomato_sauce
+    global mozzarella
+    global toppings
     """allows the player to restock on ingredients"""
     print('Welcome to PizzaMart! The store for all your pizza-shopping needs!')
     if your_money <= 0:
         print("Whoops! Looks like you don't have any money!")
         return None
-    print('store placeholder')
+    store_dough_stuff_price = round(random.uniform(4,5), 2)  # $/kg
+    # source: https://bakingsteel.com/blogs/recipes/how-much-does-it-cost-to-make-a-homemade-pizza
+    store_tomato_price = round(random.uniform(5,12), 2)  # $/l
+    # sources vary from 2 per liter to 12 per liter (depending on quality probably)
+    store_mozz_price = round(random.uniform(9,13), 2)  # $/kg
+    # source: https://www.youdreamitaly.com/en/Mozzarella-di-Bufala-DOP-1100-per-kg-VAT.xhtml?id=443
+    store_toppings_price = round(random.uniform(3,7), 2)  # $/250 things
+    # i just estimated
+    print(f'''
+What would you like to buy? These are our prices for today:
+-------------------------------------------------------------
+Dough ingedients: ${store_dough_stuff_price} per kilo   (type 'd' to buy)
+Tomato sauce: ${store_tomato_price} per liter-bottle   (type 'tom' to buy)
+Mozzarella: ${store_mozz_price} per kilo   (type 'm' to buy)
+Toppings: ${store_toppings_price} per bunch (250) (  type 'top' to buy)
+''')
+    while True:
+        while True:
+            product_selection = input('What would you like to buy?')
+            if product_selection.lower() in ['d', 'tom', 'm', 'top']:
+                break
+            else:
+                print('Please use one of the shorthands provided in the product list above.')
+                continue
 
+        while True:
+            product_amount = input('How many units would you like to buy?')
+            if product_amount.lower().isdigit():
+                break
+            else:
+                print('Please say a number for this.')
+                continue
+
+        shorthands_and_prices_dic = {
+            'd': store_dough_stuff_price,
+            'tom': store_tomato_price,
+            'm': store_mozz_price,
+            'top': store_toppings_price
+        }
+
+        product_price = shorthands_and_prices_dic(product_selection.lower()) * product_amount
+        if product_price > your_money:
+            print("Looks like you don't have enough money! Shouldn't have been so greedy i guess. (You left the store)")
+            break
+        your_money -= product_price
+        input(f'You paid for the products, you now have {your_money}.')
+        # last here
 
 def the_pizza_function():
     """generates a random pizza"""
@@ -155,10 +206,10 @@ def the_pizza_function():
     pizza_kind = random.choice(pizzas)
     extra_topping = random.choice(toppings)
     if random.randint(0, 3) == 3:
-        pizza_price = random.randint(18,23)
+        pizza_price = round(random.uniform(18, 23), 2)
         return f'a {pizza_kind} pizza with extra {extra_topping}'
     else:
-        pizza_price = random.randint(12,17)
+        pizza_price = round(random.uniform(12, 17), 2)
         return f'a {pizza_kind} pizza'
 
 
@@ -169,7 +220,7 @@ def handle_input(player_name, current_caller):
     global dough
     global tomato_sauce
     global mozzarella
-    global ambiguous_ingredients
+    global toppings
     global delivery_failed_ingredients
     failed_deliveries= 0
     while True:
@@ -192,8 +243,8 @@ def handle_input(player_name, current_caller):
             print("You ran ot of mozzarella. You literally can't make a pizza.")
             delivery_failed = True
             break
-        elif ambiguous_ingredients <= 0:
-            ambiguous_ingredients = 0
+        elif toppings <= 0:
+            toppings = 0
             failed_deliveries += 1
             print("You ran out of ingredients. You can't make a pizza.")
             delivery_failed = True
@@ -306,13 +357,13 @@ delivery_failed = False
 delivery_failed_ingredients = False
 game_over = False
 
-your_money = 50
+your_money = 0.00
 pizza_price = 15
 
 dough = 2000  # grams
 tomato_sauce = 2000  # milliliters
 mozzarella = 2000  # grams
-ambiguous_ingredients = 500  # individual "things"
+toppings = 500  # individuals
 
 # ingredient amount use per pizza
 dough_use = 400  # g
