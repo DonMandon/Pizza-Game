@@ -16,7 +16,7 @@ def intro():
 
 ''')
     # Title ASCII art from https://patorjk.com/software/taag/#p=display&f=Bloody&t=THE%20PIZZA%20GAME
-    player_name = input('What is your first name? ')
+    player_name = input('What is your first name? > ')
     print(f'Hi, {player_name}. In this game, you take orders, and then tell a delivery guy where to deliver them.')
     print('''
 |Map of the city of Hyattsville|
@@ -51,7 +51,7 @@ The above is a map of the homes where you need to send pizzas to.
 I recommend you take a picture of it since you'll have to scroll a lot otherwise.
 The letters are the first letters of their names.
 Your job is to give a truck driver the location (the coordinates) of the home ordering the pizza.\n''')
-    introduction_check = input('Do you need an introduction? (recommended for a first-time player) ').lower()
+    introduction_check = input('Do you need an introduction? (recommended for a first-time player) > ').lower()
     if introduction_check == 'yes':
         print(f'''
 Somebody will ask for a pizza to be delivered. Then a delivery guy will ask you for the location.
@@ -90,8 +90,8 @@ def deliver_pizza(player_name):
     while True:
         topping_use = random.randint(0, 45)
         # though it doesn't make sense sometimes to use 30 ingredient pieces for a margarita, consider this: it's funny
-        print(f'You have ${your_money}')
-        store_ask = input('Would you like to go to the store? (yes/no) ')
+        print(f'You have ${round(your_money, 2)}')
+        store_ask = input('Would you like to go to the store? (yes/no) > ')
         if store_ask.lower() == 'yes':
             store()
             continue
@@ -111,18 +111,19 @@ def deliver_pizza(player_name):
             input(f'''
 Transaction Overview:
 ---------------------
-The customer paid you ${pizza_price}.    To make the pizza, you used {dough_use}g of dough,                                   
+The customer paid you ${pizza_price}.            
+                                         To make the pizza, you used {dough_use}g of dough,                                   
 You paid the driver $7.                  {tomato_sauce_use}ml of tomato sauce, {mozzarella_use}g of mozzarella,
-                                         and {topping_use} ingredient pieces.
+                                         and {topping_use} toppings.
                                          You now have left:
                                          {float(dough)/1000}kg of dough
                                          {float(tomato_sauce)/1000}l of tomato sauce
                                          {float(mozzarella)/1000}kg of mozzarella
-Profit: ${round(pizza_price - 7),2}               {toppings} toppings
+Profit: ${round((pizza_price - 7),2)}                            {toppings} toppings
 
-(press enter to continue)
+(press any key to continue)
 ''')
-            # I don't know why, but it needs to be formatted like this in the code to look proper when displayed
+
             consecutive_deliveries += 1
         if delivery_failed:
             failed_deliveries += 1
@@ -136,12 +137,12 @@ Profit: ${round(pizza_price - 7),2}               {toppings} toppings
 
 
 def store():
+    """allows the player to restock on ingredients"""
     global your_money
     global dough
     global tomato_sauce
     global mozzarella
     global toppings
-    """allows the player to restock on ingredients"""
     print('Welcome to PizzaMart! The store for all your pizza-shopping needs!')
     if your_money <= 0:
         print("Whoops! Looks like you don't have any money!")
@@ -160,11 +161,11 @@ What would you like to buy? These are our prices for today:
 Dough ingedients: ${store_dough_stuff_price} per kilo   (type 'd' to buy)
 Tomato sauce: ${store_tomato_price} per liter-bottle   (type 'tom' to buy)
 Mozzarella: ${store_mozz_price} per kilo   (type 'm' to buy)
-Toppings: ${store_toppings_price} per bunch (250) (  type 'top' to buy)
+Toppings: ${store_toppings_price} per bunch (250) (type 'top' to buy)
 ''')
     while True:
         while True:
-            product_selection = input('What would you like to buy?')
+            product_selection = input('What would you like to buy? > ')
             if product_selection.lower() in ['d', 'tom', 'm', 'top']:
                 break
             else:
@@ -172,7 +173,7 @@ Toppings: ${store_toppings_price} per bunch (250) (  type 'top' to buy)
                 continue
 
         while True:
-            product_amount = input('How many units would you like to buy?')
+            product_amount = input('How many units would you like to buy? > ')
             if product_amount.lower().isdigit():
                 break
             else:
@@ -186,23 +187,39 @@ Toppings: ${store_toppings_price} per bunch (250) (  type 'top' to buy)
             'top': store_toppings_price
         }
 
-        product_price = shorthands_and_prices_dic[product_selection.lower()] * product_amount
+        product_price = shorthands_and_prices_dic[product_selection.lower()] * float(product_amount)
         if product_price > your_money:
-            print("Looks like you don't have enough money! Shouldn't have been so greedy i guess. (You left the store)")
-            break
+            input("Looks like you don't have enough money for this! Maybe you would like to buy something else?")
+            continue
         your_money -= product_price
-        input(f'You paid for the products, you now have {your_money}.')
+        input(f'You paid for the products, you now have ${round(your_money, 2)}')
 
         if product_selection.lower() == 'top':
-            toppings += 250 * product_amount
+            toppings += 250 * int(product_amount)
+            input(f'You got {product_amount} toppings!')
         else:
             shorthands_and_products_dic = {
                 'd': dough,
                 'tom': tomato_sauce,
                 'm': mozzarella,
             }
-            shorthands_and_products_dic[product_selection.lower()] += 1000 * product_amount
-        # last here
+            shorthands_and_names_dic = {
+                'd': 'dough ingredients',
+                'tom': 'tomato sauce',
+                'm': 'mozzarella'
+            }
+
+            shorthands_and_products_dic[product_selection.lower()] += 1000 * int(product_amount)
+            if product_selection.lower() == 'tom':
+                input(f'You got {product_amount}l of of tomato sauce!')
+            else:
+                input(f'You got {product_amount}kg of {shorthands_and_names_dic[product_selection.lower()]}!')
+        is_that_all = input('Would you like to buy something else? (yes/no) > ')
+        if is_that_all.lower() == 'yes':
+            continue
+        else:
+            input('Thank you for shopping at PizzaMart!\n')
+            break
 
 def the_pizza_function():
     """generates a random pizza"""
@@ -234,7 +251,7 @@ def handle_input(player_name, current_caller):
     global delivery_failed_ingredients
     failed_deliveries= 0
     while True:
-        input_coords = input(f'Driver to {player_name}. Where does {current_caller} live? ')
+        input_coords = input(f'Driver to {player_name}. Where does {current_caller} live? > ')
         if dough <= 0:
             dough = 0
             failed_deliveries += 1
