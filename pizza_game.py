@@ -1,6 +1,7 @@
 # Based on the game showcased in "BASIC Computer Games" game on pdf page 141
 import random
 
+
 def intro():
     """introduces the player to game mechanics"""
     print('''
@@ -60,6 +61,9 @@ Example: Hello {player_name}'s Pizza. This is Jason. I'd like a pizza.
 Driver to {player_name}. where does Jason live? Your answer would be '2,3'
 (The first coordinate is horizontal, the second one vertical)
 
+You'll also need to worry about how much money and ingredients you have!
+You earn money with each delivery and can spend it to buy more ingredients at the store.
+
 You can quit the game by typing 'quit' when asked about the coordinates.
 A bit sad, but I'm sure they'll find someone else to yell the coordinates for you.\n''')
     elif introduction_check == 'no':
@@ -88,8 +92,10 @@ def deliver_pizza(player_name):
     failed_deliveries = 0
     consecutive_deliveries = 0
     while True:
+        if your_money <= 0:
+            your_money = 0
         topping_use = random.randint(0, 45)
-        # though it doesn't make sense sometimes to use 30 ingredient pieces for a margarita, consider this: it's funny
+        # though it doesn't make sense to use 30 toppings for a margarita, consider this: it's funny
         print(f'You have ${round(your_money, 2)}')
         store_ask = input('Would you like to go to the store? (yes/no) > ')
         if store_ask.lower() == 'yes':
@@ -101,6 +107,14 @@ def deliver_pizza(player_name):
         input_coords = handle_input(player_name, current_caller)
         if input_coords.lower() == 'quit':
             break
+        if input_coords == 'ran_out':
+            failed_deliveries += 1
+            consecutive_deliveries = 0
+            print(f"Driver to {player_name}. Unfortunately you failed to deliver the pizza.")
+            input(f'Failed deliveries: {failed_deliveries}\n')
+            if failed_deliveries >= 3:
+                game_over = True
+                break
         if the_populus.get(current_caller) == input_coords:
             print(f"Customer speaking: Hello {player_name}, this is {current_caller}. Thanks for the pizza!")
             your_money += pizza_price - 7
@@ -125,14 +139,6 @@ Profit: ${round((pizza_price - 7),2)}                            {toppings} topp
 ''')
 
             consecutive_deliveries += 1
-        if delivery_failed:
-            failed_deliveries += 1
-            consecutive_deliveries = 0
-            print(f"Driver to {player_name}. Unfortunately you failed to deliver the pizza.")
-            input(f'Failed deliveries: {failed_deliveries}')
-            if failed_deliveries >= 3:
-                game_over = True
-                break
     end_game(player_name, consecutive_deliveries)
 
 
@@ -255,27 +261,27 @@ def handle_input(player_name, current_caller):
         if dough <= 0:
             dough = 0
             failed_deliveries += 1
-            print("You ran outta dough. You literally can't make a pizza.")
+            print("You ran outta dough. You can't make a pizza.")
             delivery_failed = True
-            break
+            return 'ran_out'
         elif tomato_sauce <= 0:
             tomato_sauce = 0
             failed_deliveries += 1
-            print("You ran out of tomato sauce. You literally can't make a pizza.")
+            print("You ran out of tomato sauce. You can't make a pizza.")
             delivery_failed = True
-            break
+            return 'ran_out'
         elif mozzarella <= 0:
             mozzarella = 0
             failed_deliveries += 1
-            print("You ran ot of mozzarella. You literally can't make a pizza.")
+            print("You ran ot of mozzarella. You can't make a pizza.")
             delivery_failed = True
-            break
+            return 'ran_out'
         elif toppings <= 0:
             toppings = 0
             failed_deliveries += 1
             print("You ran out of ingredients. You can't make a pizza.")
             delivery_failed = True
-            break
+            return 'ran_out'
 
         cant_find_statements = [
             f"Driver to {player_name}. Sorry man, I can't find that on the map.",
@@ -379,6 +385,7 @@ the_populus = {
     'Oliver': '3,4',
     'Paul': '4,4'
 }
+
 failed_deliveries = 0
 delivery_failed = False
 delivery_failed_ingredients = False
