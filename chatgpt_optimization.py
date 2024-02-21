@@ -1,6 +1,37 @@
 import random
 
+print('''
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+
+
+THIS IS THE CHATGPT VERSION
+''')
 def the_pizza_function():
     pizzas = ['Salami', 'Margherita', 'Diavola', 'Hawaiian', 'Buffalo', 'Pepperoni', 'BBQ', 'Neapolitan', 'Meat']
     toppings = ['salami', 'cheese', 'onions', 'anchovies', 'olives', 'pepperoni', 'BBQ sauce', 'rucola', 'garlic',
@@ -76,7 +107,7 @@ print('''
 Good luck delivering those pizzas!
 ''')
 
-caller_coordinates = {
+the_populus = {
     'Matt': '1,4', 'Nolan': '2,4', 'Oliver': '3,4', 'Paul': '4,4',
     'Isabelle': '1,3', 'Jason': '2,3', 'Kevin': '3,3', 'Lauren': '4,3',
     'Elizabeth': '1,2', 'Felix': '2,2', 'Gregory': '3,2', 'Henry': '4,2',
@@ -86,30 +117,30 @@ caller_coordinates = {
 failed_deliveries = 0
 
 while True:
-    pizza_got_cold = False
-    current_caller = random.choice(list(caller_coordinates.keys()))
+    delivery_failed = False
+    current_caller = random.choice(list(the_populus.keys()))
     print(f'*ring* *ring* Hello, {player_name}\'s Pizza. This is {current_caller}. I\'d like {the_pizza_function()}.')
     input_coords = input(f'Driver to {player_name}. Where does {current_caller} live? ')
 # this version can't handle the player inputting invalid coordinates
     if input_coords.lower() == 'quit':
         break
-    elif caller_coordinates.get(current_caller) == input_coords:
+    elif the_populus.get(current_caller) == input_coords:
         print(f'*ring* *ring* Hello {player_name}, this is {current_caller}. Thanks for the pizza!')
     else:
         pizza_cold_timer = 0
         while True:
-            if caller_coordinates.get(current_caller) == input_coords:
+            if the_populus.get(current_caller) == input_coords:
                 print(f'*ring* *ring* Hello {player_name}, this is {current_caller}. Thanks for the pizza!')
                 break
             else:
-                print(f'*ring* *ring* Hello {player_name}, this is {list(caller_coordinates.keys())[list(caller_coordinates.values()).index(input_coords)]}. I did not order a pizza. I live at {input_coords}.')
+                print(f'*ring* *ring* Hello {player_name}, this is {list(the_populus.keys())[list(the_populus.values()).index(input_coords)]}. I did not order a pizza. I live at {input_coords}.')
                 input_coords = input(f'Driver to {player_name}. Where does {current_caller} live? ')
                 pizza_cold_timer += 1
                 if pizza_cold_timer == 3:
-                    pizza_got_cold = True
+                    delivery_failed = True
                     break
 
-    if pizza_got_cold:
+    if delivery_failed:
         print(f'Driver to {player_name}. Unfortunately, the pizza got cold. The delivery failed.')
         failed_deliveries += 1
         print(f'Failed deliveries: {failed_deliveries}')

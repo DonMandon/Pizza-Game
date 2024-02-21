@@ -186,12 +186,22 @@ Toppings: ${store_toppings_price} per bunch (250) (  type 'top' to buy)
             'top': store_toppings_price
         }
 
-        product_price = shorthands_and_prices_dic(product_selection.lower()) * product_amount
+        product_price = shorthands_and_prices_dic[product_selection.lower()] * product_amount
         if product_price > your_money:
             print("Looks like you don't have enough money! Shouldn't have been so greedy i guess. (You left the store)")
             break
         your_money -= product_price
         input(f'You paid for the products, you now have {your_money}.')
+
+        if product_selection.lower() == 'top':
+            toppings += 250 * product_amount
+        else:
+            shorthands_and_products_dic = {
+                'd': dough,
+                'tom': tomato_sauce,
+                'm': mozzarella,
+            }
+            shorthands_and_products_dic[product_selection.lower()] += 1000 * product_amount
         # last here
 
 def the_pizza_function():
